@@ -5,7 +5,7 @@ type DemoLink = {
     path: string;
     title: string;
     description: string;
-    category: "HTTP" | "Syntax" | "Components";
+    category: "HTTP" | "Syntax" | "Components" | "State";
     icon: string;
 };
 
@@ -30,6 +30,13 @@ const DEMO_LINKS: DemoLink[] = [
         description: "Comparing ternary, AND, and OR operators for conditional logic",
         category: "Syntax",
         icon: "🔀",
+    },
+    {
+        path: "/zustand",
+        title: "Zustand",
+        description: "State management with Zustand — store, selectors, re-renders",
+        category: "State",
+        icon: "🐻",
     },
 ];
 

@@ -6,6 +6,7 @@ import { Home } from "./home";
 import Axios from "./pages/http/axios";
 import { SimpleTernary } from "./pages/ternary-or-and/SimpleTernary";
 import TestTernaryOrAndOperator from "./pages/ternary-or-and/TestTernaryOrAndOperator";
+import { ZustandPage } from "./pages/zustand/ZustandPage";
 
 createRoot(document.getElementById("root")!).render(
     <StrictMode>
@@ -20,6 +21,8 @@ createRoot(document.getElementById("root")!).render(
                     <Route path="SimpleTernary" element={<SimpleTernary />} />
                     <Route path="ternaryOrAnd" element={<TestTernaryOrAndOperator />} />
                 </Route>
+
+                <Route path="zustand" element={<ZustandPage />} />
             </Routes>
         </BrowserRouter>
     </StrictMode>,
