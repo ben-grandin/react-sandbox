@@ -7,6 +7,10 @@ import Axios from "./pages/http/axios";
 import { SimpleTernary } from "./pages/ternary-or-and/SimpleTernary";
 import TestTernaryOrAndOperator from "./pages/ternary-or-and/TestTernaryOrAndOperator";
 import { ZustandPage } from "./pages/zustand/ZustandPage";
+import { FlexShrinkDemo } from "./pages/css/FlexShrinkDemo";
+import { ContextPage } from "./pages/context/ContextPage";
+import { ReactQueryPage } from "./pages/react-query/ReactQueryPage";
+import { NavDemoApp } from "./pages/react-query/nav-demo/NavDemoApp";
 
 createRoot(document.getElementById("root")!).render(
     <StrictMode>
@@ -23,6 +27,15 @@ createRoot(document.getElementById("root")!).render(
                 </Route>
 
                 <Route path="zustand" element={<ZustandPage />} />
+
+                <Route path="css">
+                    <Route path="flex-shrink" element={<FlexShrinkDemo />} />
+                </Route>
+
+                <Route path="context" element={<ContextPage />} />
+
+                <Route path="react-query/nav-demo/*" element={<NavDemoApp />} />
+                <Route path="react-query" element={<ReactQueryPage />} />
             </Routes>
         </BrowserRouter>
     </StrictMode>,

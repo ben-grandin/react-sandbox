@@ -63,6 +63,9 @@ temp/
 # TypeScript
 *.tsbuildinfo
 
+# TanStack Router — auto-généré par le plugin vite
+routeTree.gen.ts
+
 # Optional npm cache directory
 .npm
 

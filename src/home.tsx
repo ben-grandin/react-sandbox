@@ -5,7 +5,7 @@ type DemoLink = {
     path: string;
     title: string;
     description: string;
-    category: "HTTP" | "Syntax" | "Components" | "State";
+    category: "HTTP" | "Syntax" | "Components" | "State" | "CSS" | "Data Fetching";
     icon: string;
 };
 
@@ -37,6 +37,27 @@ const DEMO_LINKS: DemoLink[] = [
         description: "State management with Zustand — store, selectors, re-renders",
         category: "State",
         icon: "🐻",
+    },
+    {
+        path: "/css/flex-shrink",
+        title: "flex-shrink + min-width:auto",
+        description: "Pourquoi setter une width peut paradoxalement réduire la taille d'un flex item",
+        category: "CSS",
+        icon: "📐",
+    },
+    {
+        path: "/context",
+        title: "createContext",
+        description: "useContext avec et sans Provider — valeur par défaut vs valeur injectée",
+        category: "State",
+        icon: "🧩",
+    },
+    {
+        path: "/react-query",
+        title: "fetchQuery vs ensureQueryData",
+        description: "Comparaison par clic et par navigation (loader) des deux méthodes de TanStack Query",
+        category: "Data Fetching",
+        icon: "🗃️",
     },
 ];
 
