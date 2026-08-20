@@ -1,5 +1,6 @@
 import React from "react";
 import { Link } from "react-router";
+import { API_ORIGIN } from "./lib/api";
 import { sandboxes } from "./sandbox-registry";
 
 export const Home: React.FC = () => (
@@ -15,7 +16,7 @@ export const Home: React.FC = () => (
             </p>
 
             <a
-                href="http://localhost:8000/api/docs"
+                href={`${API_ORIGIN}/api/docs`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-2 text-sm font-semibold px-4 py-2 rounded-full bg-emerald-100 text-emerald-700 hover:bg-emerald-200 transition-colors"

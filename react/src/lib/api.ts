@@ -1,5 +1,13 @@
 const API_BASE = import.meta.env.VITE_API_BASE_URL ?? "/api";
 
+/**
+ * Full backend origin — for links that navigate away from the SPA entirely
+ * (e.g. the Swagger UI link) rather than going through the same-origin Vite
+ * proxy. Override in `.env.local` (gitignored) when browsing the front under
+ * a custom hostname, e.g. `VITE_API_ORIGIN=http://api.sandbox.local:8000`.
+ */
+export const API_ORIGIN = import.meta.env.VITE_API_ORIGIN ?? "http://localhost:8000";
+
 export type HydraCollection<T> = {
     "@context": string;
     "@id": string;
