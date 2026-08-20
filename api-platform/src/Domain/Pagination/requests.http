@@ -1,0 +1,51 @@
+### Pagination domain — PhpStorm HTTP Client requests
+#
+# Select an environment (dropdown top-right of this file, or the gutter icon)
+# from http-client.env.json: "dev" (http://localhost:8000) or "sandbox.local"
+# (http://api.sandbox.local:8000, requires the /etc/hosts entry).
+#
+# Bootstrapped from api/docs.json via Generate Requests, then hand-curated to
+# the examples that actually demonstrate the domain's contract.
+
+### Collection, page 1 — 5 items/page (paginationItemsPerPage on the operation),
+### client-driven itemsPerPage (paginationClientItemsPerPage: true)
+GET {{baseUrl}}/api/pagination/snapshots?page=1&itemsPerPage=5
+Accept: application/ld+json
+
+> {%
+    client.assert(response.body.totalItems === 60, "expected 60 seeded snapshots");
+    client.assert(response.body.member.length === 5, "expected 5 members on page 1");
+    client.assert(response.body.view.next !== undefined, "page 1 of 12 must have a next link");
+    client.assert(response.body.view.previous === undefined, "page 1 must have no previous link");
+    // Chain into the single-item request below.
+    client.global.set("firstSnapshotId", response.body.member[0]["@id"]);
+%}
+
+### Collection, page 2 — same query as above, page bumped.
+# Note: view.next/view.previous URLs sort query params alphabetically
+# (itemsPerPage before page), not in request order — don't assert on exact
+# string equality without accounting for that.
+GET {{baseUrl}}/api/pagination/snapshots?page=2&itemsPerPage=5
+Accept: application/ld+json
+
+> {%
+    client.assert(response.body.view.next.includes("page=3"), "page 2 must link to page 3");
+    client.assert(response.body.view.previous.includes("page=1"), "page 2 must link back to page 1");
+%}
+
+### Single item, by @id chained from the page-1 request above.
+GET {{baseUrl}}{{firstSnapshotId}}
+Accept: application/ld+json
+
+> {%
+    client.assert(response.body.label === "Snapshot #01", "chained @id must resolve to the first seeded row");
+%}
+
+### Wrong Accept header — API Platform 4 only registers jsonld by default,
+### so this is expected to 406, not 200. Useful when someone forgets the header.
+GET {{baseUrl}}/api/pagination/snapshots
+Accept: application/json
+
+> {%
+    client.assert(response.status === 406, "plain application/json must be rejected without a json format registered");
+%}
