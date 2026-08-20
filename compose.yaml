@@ -1,0 +1,54 @@
+services:
+  database:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: app
+      POSTGRES_USER: app
+      POSTGRES_PASSWORD: app
+    healthcheck:
+      test: ["CMD", "pg_isready", "-d", "app", "-U", "app"]
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    ports:
+      - "5432:5432"
+    volumes:
+      - database_data:/var/lib/postgresql/data:rw
+
+  php:
+    build: ./api-platform
+    depends_on:
+      database:
+        condition: service_healthy
+    environment:
+      # ":80" disables Caddy's automatic HTTPS (documented in frankenphp docs/config.md),
+      # so the API is plain HTTP and the browser needs no local CA trust.
+      SERVER_NAME: ":80"
+      XDEBUG_MODE: "${XDEBUG_MODE:-off}"
+    extra_hosts:
+      - host.docker.internal:host-gateway
+    ports:
+      - "8000:80"
+    volumes:
+      - ./api-platform:/app
+      # var/ stays out of the bind mount: it is written on every request and is the one
+      # directory whose I/O over virtiofs is worth avoiding. vendor/ stays IN the bind
+      # mount on purpose, so PhpStorm can index Symfony and API Platform sources.
+      - /app/var
+    tty: true
+
+  react:
+    profiles: [front]
+    build: ./react
+    environment:
+      API_PROXY_TARGET: http://php
+    ports:
+      # Same port on both sides: Vite's HMR client then needs no clientPort override.
+      - "5173:5173"
+    volumes:
+      - ./react:/app
+      - /app/node_modules
+    command: pnpm dev --host 0.0.0.0
+
+volumes:
+  database_data:
