@@ -1,8 +1,9 @@
 ### Pagination domain — PhpStorm HTTP Client requests
 #
-# Select an environment (dropdown top-right of this file, or the gutter icon)
-# from http-client.env.json: "dev" (http://localhost:8000) or "sandbox.local"
-# (http://api.sandbox.local:8000, requires the /etc/hosts entry).
+# Select an environment first (dropdown top-right of this file, or the gutter
+# icon) — PhpStorm never picks one automatically. From http-client.env.json:
+# "dev" (http://localhost:8000) or "sandbox" (http://api.sandbox.local:8000,
+# requires the /etc/hosts entry).
 #
 # Bootstrapped from api/docs.json via Generate Requests, then hand-curated to
 # the examples that actually demonstrate the domain's contract.
