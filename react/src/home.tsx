@@ -1,9 +1,15 @@
-import React from "react";
+import { useEffect } from "react";
+import type React from "react";
 import { Link } from "react-router";
 import { API_ORIGIN } from "./lib/api";
 import { sandboxes } from "./sandbox-registry";
 
-export const Home: React.FC = () => (
+export const Home: React.FC = () => {
+    useEffect(() => {
+        document.title = "React Sandbox";
+    }, []);
+
+    return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-50 to-purple-100 p-8">
         <div className="text-center mb-12">
             <h1 className="text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 to-purple-600 mb-4">
@@ -79,4 +85,5 @@ export const Home: React.FC = () => (
             </p>
         </div>
     </div>
-);
+    );
+};
