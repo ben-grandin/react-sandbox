@@ -24,10 +24,11 @@ a:hover {
   color: #535bf2;
 }
 
+/* Left over from the Vite starter template: it centered a small counter
+   demo, but "display: flex; place-items: center" shrinks #root — and every
+   sandbox page inside it — to content width instead of the full viewport. */
 body {
   margin: 0;
-  display: flex;
-  place-items: center;
   min-width: 320px;
   min-height: 100vh;
 }

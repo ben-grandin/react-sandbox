@@ -12,9 +12,9 @@ use App\Domain\SerializationDemo\State\ManualArraySerializationProvider;
 use App\Domain\SerializationDemo\State\SymfonySerializerNormalizationProvider;
 
 /**
- * Ressource non persistée : 4 opérations qui reproduisent les 3 stratégies pour renvoyer une
+ * Ressource non persistée : 5 opérations qui reproduisent les stratégies pour renvoyer une
  * collection depuis un State Provider (maison / Symfony Serializer / API Platform), avec un
- * sous-cas cassé et un sous-cas correct pour la 3e (le bug réel rencontré sur PIC-5442).
+ * sous-cas cassé et deux contre-exemples corrects pour la 3e (le bug réel rencontré sur PIC-5442).
  */
 #[ApiResource(
     operations: [
@@ -26,21 +26,26 @@ use App\Domain\SerializationDemo\State\SymfonySerializerNormalizationProvider;
         new GetCollection(
             uriTemplate: '/serialization-demo/symfony-serializer',
             description: '2. Symfony Serializer : le provider appelle NormalizerInterface::normalize() sur un objet porteur de #[Groups].',
-            provider: SymfonySerializerNormalizationProvider::class,
             normalizationContext: ['groups' => ['serialization-demo:read']],
+            provider: SymfonySerializerNormalizationProvider::class,
         ),
         new GetCollection(
             uriTemplate: '/serialization-demo/api-platform-naive',
             description: "3a. API Platform, cas cassé : le provider retourne des objets SuggestionItem bruts (sans #[Groups] ni output:) - hydra:member vide.",
-            provider: ApiPlatformNaiveObjectProvider::class,
             normalizationContext: ['groups' => ['serialization-demo:read']],
+            provider: ApiPlatformNaiveObjectProvider::class,
         ),
         new GetCollection(
             uriTemplate: '/serialization-demo/api-platform-dto',
             description: '3b. API Platform, cas correct : output: SuggestionItemOutput::class + #[Groups] sur le DTO.',
-            provider: ApiPlatformDtoProvider::class,
-            output: SuggestionItemOutput::class,
             normalizationContext: ['groups' => ['serialization-demo:read']],
+            output: SuggestionItemOutput::class,
+            provider: ApiPlatformDtoProvider::class,
+        ),
+        new GetCollection(
+            uriTemplate: '/serialization-demo/no-context',
+            description: "3c. API Platform, contre-exemple : MÊME provider que 3a (objets SuggestionItem bruts, sans #[Groups]), mais sans normalizationContext sur l'opération - aucun groupe actif, donc rien à filtrer. Prouve que le bug de 3a vient du groupe actif sans déclaration correspondante, pas du fait de renvoyer un objet brut.",
+            provider: ApiPlatformNaiveObjectProvider::class,
         ),
     ],
 )]

@@ -39,6 +39,13 @@ const CASES: Case[] = [
         explanation:
             "output: SuggestionItemOutput::class + #[Groups] sur le DTO. Les propriétés survivent au filtrage, mais un @id skolem apparaît (RDF skolemization) : un objet API Platform hors ressource n'a pas d'identité propre.",
     },
+    {
+        path: "/serialization-demo/no-context",
+        title: "3c. API Platform — même objet brut, sans normalizationContext",
+        verdict: "ok",
+        explanation:
+            "Exactement le même provider que 3a (objet SuggestionItem brut, sans #[Groups]), mais l'opération n'a aucun normalizationContext. Aucun groupe actif = rien à filtrer : toutes les propriétés survivent. Prouve que le bug de 3a vient du groupe actif sans déclaration correspondante, pas du fait de renvoyer un objet brut.",
+    },
 ];
 
 function createDemoQueryClient() {
@@ -93,7 +100,7 @@ function SerializationDemoPageContent() {
                 <div className="text-center">
                     <h1 className="text-3xl font-bold text-gray-800 mb-2">Sérialisation : maison vs Symfony vs API Platform</h1>
                     <p className="text-gray-600">
-                        Même donnée, 4 façons de la renvoyer depuis un State Provider — un seul cas est vraiment cassé.
+                        Même donnée, 5 façons de la renvoyer depuis un State Provider — un seul cas est vraiment cassé.
                     </p>
                 </div>
 

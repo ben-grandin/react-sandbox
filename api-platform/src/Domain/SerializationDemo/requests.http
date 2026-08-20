@@ -1,10 +1,13 @@
 ### SerializationDemo domain — PhpStorm HTTP Client requests
 #
-# Four strategies for returning a collection from a State Provider, from the
-# same 3 source objects (SuggestionItem::samples()). Cases 3a/3b reproduce a
-# real bug (PIC-5442): an ObjectNormalizer with an active normalizationContext
-# group filters ALL properties off a class that has no matching #[Groups] —
-# silently, with a 200 and a skolem @id, not an error.
+# Five strategies for returning a collection from a State Provider, from the
+# same 3 source objects (SuggestionItem::samples()). Cases 3a/3b/3c reproduce
+# and dissect a real bug (PIC-5442): an ObjectNormalizer with an active
+# normalizationContext group filters ALL properties off a class that has no
+# matching #[Groups] — silently, with a 200 and a skolem @id, not an error.
+# 3c proves the SAME raw object serializes fine when no group is active at
+# all — the bug is the active-group-without-declaration combination, not
+# "returning a raw object" by itself.
 #
 # Select an environment first (dropdown top-right, or the gutter icon) —
 # PhpStorm never picks one automatically. From http-client.env.json: "dev" or
@@ -55,4 +58,18 @@ Accept: application/ld+json
     client.assert(response.body.member[0].title !== undefined, "output DTO with matching #[Groups] must survive normalization");
     client.assert(response.body.member[0]["@type"] === "SuggestionItemOutput", "a real API Platform resource object gets @type, unlike cases 1/2");
     client.assert(response.body.member[0]["@id"].includes("/.well-known/genid/"), "no explicit @id on the DTO -> RDF skolemization mints one, still present but harmless once data isn't empty");
+%}
+
+### 3c. API Platform, COUNTER-EXAMPLE — the exact same provider as 3a (raw
+### SuggestionItem objects, no #[Groups] on the class), but this operation has
+### NO normalizationContext at all. No active group -> nothing to filter
+### against -> every property survives. Compare directly against 3a: same
+### PHP object, same class, only the operation's context differs.
+GET {{baseUrl}}/api/serialization-demo/no-context
+Accept: application/ld+json
+
+> {%
+    client.assert(response.body.member[0].title !== undefined, "no active group -> nothing filtered, unlike 3a");
+    client.assert(response.body.member[0]["@type"] === "SuggestionItem", "same raw class as 3a — the difference is entirely in the operation's context, not the provider");
+    client.assert(response.body.member[0]["@id"].includes("/.well-known/genid/"), "skolemization still applies — it's independent of groups");
 %}
