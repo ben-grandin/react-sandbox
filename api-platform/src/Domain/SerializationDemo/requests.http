@@ -1,0 +1,58 @@
+### SerializationDemo domain — PhpStorm HTTP Client requests
+#
+# Four strategies for returning a collection from a State Provider, from the
+# same 3 source objects (SuggestionItem::samples()). Cases 3a/3b reproduce a
+# real bug (PIC-5442): an ObjectNormalizer with an active normalizationContext
+# group filters ALL properties off a class that has no matching #[Groups] —
+# silently, with a 200 and a skolem @id, not an error.
+#
+# Select an environment first (dropdown top-right, or the gutter icon) —
+# PhpStorm never picks one automatically. From http-client.env.json: "dev" or
+# "sandbox".
+
+### 1. Manual array — hand-built assoc array in the provider, no serialization
+### component involved. title/description/score present, no @type/@id (arrays
+### don't get one).
+GET {{baseUrl}}/api/serialization-demo/manual
+Accept: application/ld+json
+
+> {%
+    client.assert(response.body.totalItems === 3, "expected 3 seeded suggestions");
+    client.assert(response.body.member[0].title !== undefined, "manual array must carry title");
+    client.assert(response.body.member[0]["@id"] === undefined, "plain arrays get no @id");
+%}
+
+### 2. Symfony Serializer — NormalizerInterface::normalize() on the same
+### SuggestionItemOutput DTO used by case 3b, called directly instead of going
+### through API Platform's own normalization pipeline. Same shape as #1.
+GET {{baseUrl}}/api/serialization-demo/symfony-serializer
+Accept: application/ld+json
+
+> {%
+    client.assert(response.body.member[0].title !== undefined, "explicit normalize() call must carry title");
+    client.assert(response.body.member[0].score === 0.92, "score must round-trip through the normalizer");
+%}
+
+### 3a. API Platform, BROKEN — provider returns raw SuggestionItem objects.
+### No #[Groups] on the class, but normalizationContext.groups is active on
+### the operation -> ObjectNormalizer filters every property. This 200s. It
+### does not throw. That's the actual bug: silent data loss, not a crash.
+GET {{baseUrl}}/api/serialization-demo/api-platform-naive
+Accept: application/ld+json
+
+> {%
+    client.assert(response.body.totalItems === 3, "the collection itself is still correctly sized");
+    client.assert(Object.keys(response.body.member[0]).length === 0, "every property must be stripped — this IS the bug, not a broken assertion");
+%}
+
+### 3b. API Platform, CORRECT — output: SuggestionItemOutput::class + matching
+### #[Groups] on the DTO. Same normalizationContext.groups as 3a, but now the
+### DTO declares the group, so nothing gets filtered.
+GET {{baseUrl}}/api/serialization-demo/api-platform-dto
+Accept: application/ld+json
+
+> {%
+    client.assert(response.body.member[0].title !== undefined, "output DTO with matching #[Groups] must survive normalization");
+    client.assert(response.body.member[0]["@type"] === "SuggestionItemOutput", "a real API Platform resource object gets @type, unlike cases 1/2");
+    client.assert(response.body.member[0]["@id"].includes("/.well-known/genid/"), "no explicit @id on the DTO -> RDF skolemization mints one, still present but harmless once data isn't empty");
+%}

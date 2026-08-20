@@ -22,6 +22,9 @@ export default defineConfig({
         host: true,
         port: 5173,
         strictPort: true,
+        // Vite's DNS-rebinding guard rejects any Host header it doesn't recognize —
+        // localhost/127.0.0.1 pass by default, custom /etc/hosts aliases don't.
+        allowedHosts: ["sandbox.local"],
         proxy: {
             // No `rewrite`: /api is forwarded verbatim, which is exactly the prefix
             // config/routes/api_platform.yaml declares.

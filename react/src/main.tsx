@@ -1,4 +1,4 @@
-import { StrictMode, Suspense, lazy } from "react";
+import { StrictMode, Suspense, lazy, useEffect } from "react";
 import type { ComponentType } from "react";
 import { createRoot } from "react-dom/client";
 import "./index.css";
@@ -11,6 +11,10 @@ import type { SandboxMeta } from "./sandbox-registry";
 // the lazy component (which would remount and re-fetch).
 const cache = new Map<string, ComponentType>();
 function Sandbox({ meta }: { meta: SandboxMeta }) {
+    useEffect(() => {
+        document.title = `${meta.title} · React Sandbox`;
+    }, [meta.title]);
+
     let Component = cache.get(meta.path);
     if (!Component) {
         Component = lazy(meta.component);

@@ -119,3 +119,6 @@ out
 /api-platform/var/
 /api-platform/public/bundles/
 /api-platform/.phpunit.cache/
+
+# PhpStorm HTTP Client — secrets live only here, never committed
+http-client.private.env.json
