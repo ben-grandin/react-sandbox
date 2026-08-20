@@ -9,10 +9,19 @@ export const Home: React.FC = () => (
                 React Sandbox
             </h1>
 
-            <p className="text-gray-600 text-xl max-w-2xl mx-auto">
+            <p className="text-gray-600 text-xl max-w-2xl mx-auto mb-4">
                 A collection of interactive examples and patterns to explore React concepts, syntax variations, and
                 component implementations.
             </p>
+
+            <a
+                href="http://localhost:8000/api/docs"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 text-sm font-semibold px-4 py-2 rounded-full bg-emerald-100 text-emerald-700 hover:bg-emerald-200 transition-colors"
+            >
+                📄 API Platform Swagger UI <span aria-hidden="true">↗</span>
+            </a>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
